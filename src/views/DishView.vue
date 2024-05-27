@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-type DishType = {
-  name: string
-}
+
 enum RestaurantStatus {
   WantToTry = 'Want to Try',
   Recommended = 'Recommended',
@@ -11,37 +9,39 @@ enum RestaurantStatus {
 }
 // type RestaurantStatus = 'Want to Try' | 'Recommended' | 'Do Not Recommend' | 'Must Try'
 // const statusList = ['Want to Try', 'Recommended', 'Do Not Recommend', 'Must Try']
-interface Restaurant {
+type Diet = 'vegetarian' | 'vegan' | 'gluten-free'
+
+interface Dish {
   name?: string
-  address?: string
   status?: RestaurantStatus
-  dishes?: DishType[]
+  diet?: Diet
 }
-const restaurantList = ref<Restaurant[]>([])
-const newRestaurant = ref<Restaurant>({})
+const restaurantList = ref<Dish[]>([])
+
+const newDishes = ref<Dish>({})
 
 const addRestaurant = () => {
-  if (newRestaurant.value.name) {
-    restaurantList.value.push({ ...newRestaurant.value })
+  if (newDishes.value.name) {
+    restaurantList.value.push({ ...newDishes.value })
     // Reset lại form sau khi thêm nhà hàng
-    ;(newRestaurant.value.name = ''),
-      (newRestaurant.value.address = ''),
-      (newRestaurant.value.status = RestaurantStatus.WantToTry),
-      (newRestaurant.value.dishes = [])
+    newDishes.value.name = ''
+    newDishes.value.status = RestaurantStatus.WantToTry
+  } else {
+    alert('chưa nhập tên món ăn!')
   }
 }
 </script>
 
 <template>
   <main class="home">
-    <pre> {{ newRestaurant }} </pre>
+    <pre> {{ newDishes }} </pre>
     <form @submit.prevent="addRestaurant">
-      <label for="restaurant-name">Restaurant name </label>
-      <input id="restaurant-name" v-model="newRestaurant.name" type="text" />
+      <label for="dish-name">Restaurant name </label>
+      <input id="dish-name" v-model="newDishes.name" type="text" />
 
       <label for="restaurant-status">Restaurant status </label>
 
-      <select name="restaurant-status" id="restaurant-status" v-model="newRestaurant.status">
+      <select name="restaurant-status" id="restaurant-status" v-model="newDishes.status">
         <option
           v-for="(status, index) in Object.values(RestaurantStatus)"
           :key="index"
@@ -50,12 +50,14 @@ const addRestaurant = () => {
           {{ status }}
         </option>
       </select>
+      <label for="dish-diet">Restaurant Diet </label>
+      <input id="dish-diet" v-model="newDishes.diet" type="text" />
 
-      <button type="submit">Add Restaurant</button>
+      <button type="submit">ADD DISH</button>
     </form>
     <ul>
       <li v-for="(restaurant, index) in restaurantList" :key="index">
-        {{ restaurant.name }} - {{ restaurant.status }}
+        {{ restaurant.name }} - {{ restaurant.status }} - {{ restaurant.diet }}
       </li>
     </ul>
   </main>
